@@ -2,8 +2,7 @@
 
 const cursor = require('kittik-cursor').create().resetTTY();
 const Rectangle = require('kittik-shape-rectangle');
-const Slide = require('../lib/Slide');
-const AVAILABLE_DIRECTIONS = ['inUp', 'inDown', 'inLeft', 'inRight'];
+const Focus = require('../lib/Focus');
 const shapes = [
   Rectangle.create({background: 'dark_blue', x: 'left', y: 'top', text: 'Shape 1'}),
   Rectangle.create({background: 'dark_blue', x: 'center', y: 'top', text: 'Shape 2'}),
@@ -33,7 +32,7 @@ const nextShape = shape => {
 };
 
 const playAnimation = index => {
-  const animation = new Slide({direction: AVAILABLE_DIRECTIONS[Math.round(Math.random() * 3)]}).on('tick', onTick);
+  const animation = new Focus().on('tick', onTick);
   animation.animate(shapes[index], cursor).then(nextShape);
 };
 
