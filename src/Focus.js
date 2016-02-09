@@ -173,13 +173,12 @@ export default class Focus extends Animation {
    * @param {Cursor} cursor
    */
   animate(shape, cursor) {
-    const isBounce = this.getDirection().indexOf('bounce') !== -1;
+    const direction = this.getDirection();
 
-    if (isBounce) {
-      return this._animateBounce(shape, this.getDirection());
-    } else {
-      return this._animateShake(shape, this.getDirection());
-    }
+    if (/bounce/.test(direction)) return this._animateBounce(shape, direction);
+    if (/shake/.test(direction)) return this._animateShake(shape, direction);
+
+    return Promise.reject('Unknown animation type');
   }
 
   /**
