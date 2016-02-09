@@ -1,39 +1,39 @@
-# kittik-animation-slide
+# kittik-animation-focus
 
-![Build Status](https://img.shields.io/travis/kittikjs/animation-slide.svg)
-![Coverage](https://img.shields.io/coveralls/kittikjs/animation-slide.svg)
+![Build Status](https://img.shields.io/travis/kittikjs/animation-focus.svg)
+![Coverage](https://img.shields.io/coveralls/kittikjs/animation-focus.svg)
 
-![Downloads](https://img.shields.io/npm/dm/kittik-animation-slide.svg)
-![Downloads](https://img.shields.io/npm/dt/kittik-animation-slide.svg)
-![npm version](https://img.shields.io/npm/v/kittik-animation-slide.svg)
-![License](https://img.shields.io/npm/l/kittik-animation-slide.svg)
+![Downloads](https://img.shields.io/npm/dm/kittik-animation-focus.svg)
+![Downloads](https://img.shields.io/npm/dt/kittik-animation-focus.svg)
+![npm version](https://img.shields.io/npm/v/kittik-animation-focus.svg)
+![License](https://img.shields.io/npm/l/kittik-animation-focus.svg)
 
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
-![dependencies](https://img.shields.io/david/kittikjs/animation-slide.svg)
-![dev dependencies](https://img.shields.io/david/dev/kittikjs/animation-slide.svg)
+![dependencies](https://img.shields.io/david/kittikjs/animation-focus.svg)
+![dev dependencies](https://img.shields.io/david/dev/kittikjs/animation-focus.svg)
 
-Slide animation for Kittik shapes
+Focus animation that takes attention to shape
 
 ## Getting Started
 
 Install it via npm:
 
 ```shell
-npm install kittik-animation-slide
+npm install kittik-animation-focus
 ```
 
 Include in your project:
 
 ```javascript
-import Slide from 'kittik-animation-slide';
+import Focus from 'kittik-animation-focus';
 import Rectangle from 'kittik-shape-rectangle';
 import Cursor from 'kittik-cursor';
 
 const cursor = Cursor.create();
 const shape = Rectangle.create();
 
-Slide.create().animate(shape, cursor).then(shape => doSmthElseWithShape(shape));
+Focus.create().animate(shape, cursor).then(shape => doSmthElseWithShape(shape));
 ```
 
 ## License
