@@ -1,76 +1,28 @@
 import { assert } from 'chai';
 import sinon from 'sinon';
 import Rectangle from 'kittik-shape-rectangle';
-import Slide from '../../src/Focus';
+import Focus from '../../src/Focus';
 
-describe('Animation::Slide', () => {
+describe('Animation::Focus', () => {
   it('Should properly get/set direction', () => {
-    const animation = new Slide({direction: 'inLeft'});
-    assert.equal(animation.getDirection(), 'inLeft');
-    assert.instanceOf(animation.setDirection('inRight'), Slide);
-    assert.equal(animation.getDirection(), 'inRight');
+    const animation = new Focus({direction: 'bounceDown'});
+    assert.equal(animation.getDirection(), 'bounceDown');
+    assert.instanceOf(animation.setDirection('bounceUp'), Focus);
+    assert.equal(animation.getDirection(), 'bounceUp');
   });
 
   it('Should properly throw error if direction is not supports', () => {
-    const animation = new Slide();
+    const animation = new Focus();
     assert.throws(() => animation.setDirection('wrong'), Error, 'Unknown direction: wrong');
   });
 
-  it('Should properly parse coordinates for shape based on direction', () => {
-    const animation = new Slide();
-    const shape = new Rectangle();
-
-    assert.instanceOf(animation.setDirection('inUp'), Slide);
-    assert.deepEqual(animation._parseCoordinates(shape), {startX: 10, startY: -5, endX: 10, endY: 10});
-
-    assert.instanceOf(animation.setDirection('inDown'), Slide);
-    assert.deepEqual(animation._parseCoordinates(shape), {
-      startX: 10,
-      startY: process.stdout.rows + 5,
-      endX: 10,
-      endY: 10
-    });
-
-    assert.instanceOf(animation.setDirection('inLeft'), Slide);
-    assert.deepEqual(animation._parseCoordinates(shape), {startX: -15, startY: 10, endX: 10, endY: 10});
-
-    assert.instanceOf(animation.setDirection('inRight'), Slide);
-    assert.deepEqual(animation._parseCoordinates(shape), {
-      startX: process.stdout.columns + 15,
-      startY: 10,
-      endX: 10,
-      endY: 10
-    });
-
-    assert.instanceOf(animation.setDirection('outUp'), Slide);
-    assert.deepEqual(animation._parseCoordinates(shape), {startX: 10, startY: 10, endX: 10, endY: -5});
-
-    assert.instanceOf(animation.setDirection('outDown'), Slide);
-    assert.deepEqual(animation._parseCoordinates(shape), {
-      startX: 10,
-      startY: 10,
-      endX: 10,
-      endY: process.stdout.rows + 5
-    });
-
-    assert.instanceOf(animation.setDirection('outLeft'), Slide);
-    assert.deepEqual(animation._parseCoordinates(shape), {startX: 10, startY: 10, endX: -15, endY: 10});
-
-    assert.instanceOf(animation.setDirection('outRight'), Slide);
-    assert.deepEqual(animation._parseCoordinates(shape), {
-      startX: 10,
-      startY: 10,
-      endX: process.stdout.columns,
-      endY: 10
-    });
-  });
-
   it('Should properly call the animate() method', done => {
-    const animation = new Slide();
+    const animation = new Focus();
     const shape = new Rectangle();
     const mock = sinon.mock(animation);
 
-    mock.expects('animateProperty').twice().returns(Promise.resolve());
+    mock.expects('_animateBounce').never().returns(Promise.resolve());
+    mock.expects('_animateShake').once().returns(Promise.resolve());
 
     animation.animate(shape).then(() => {
       mock.verify();
@@ -79,33 +31,37 @@ describe('Animation::Slide', () => {
   });
 
   it('Should properly serialize animation to Object', () => {
-    const animation = new Slide();
+    const animation = new Focus();
 
     assert.deepEqual(animation.toObject(), {
-      type: 'Slide',
+      type: 'Focus',
       options: {
         duration: 1000,
         easing: 'outQuad',
-        direction: 'inRight'
+        direction: 'shakeX',
+        offset: 5,
+        repeat: 1
       }
     });
   });
 
   it('Should properly create Animation instance from object', () => {
     const obj = {
-      type: 'Slide',
+      type: 'Focus',
       options: {
         duration: 4000,
         easing: 'inOutExpo',
-        direction: 'inLeft'
+        direction: 'bounceDown',
+        offset: 20,
+        repeat: 5
       }
     };
 
-    const animation = Slide.fromObject(obj);
-    assert.instanceOf(animation, Slide);
-    assert.equal(animation.getDuration(), 4000);
+    const animation = Focus.fromObject(obj);
+    assert.instanceOf(animation, Focus);
+    assert.equal(animation.getDuration(), 4000 / 5);
     assert.equal(animation.getEasing(), 'inOutExpo');
-    assert.equal(animation.getDirection(), 'inLeft');
+    assert.equal(animation.getDirection(), 'bounceDown');
     assert.isFunction(animation.animate);
   });
 });
