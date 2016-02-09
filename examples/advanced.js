@@ -1,5 +1,7 @@
 "use strict";
 
+const AVAILABLE_DIRECTIONS = ['bounceUp', 'bounceRight', 'bounceDown', 'bounceLeft', 'shakeX', 'shakeY'];
+
 const cursor = require('kittik-cursor').create().resetTTY();
 const Rectangle = require('kittik-shape-rectangle');
 const Focus = require('../lib/Focus');
@@ -32,7 +34,12 @@ const nextShape = shape => {
 };
 
 const playAnimation = index => {
-  const animation = new Focus().on('tick', onTick);
+  const animation = new Focus({
+    direction: AVAILABLE_DIRECTIONS[Math.floor(Math.random() * AVAILABLE_DIRECTIONS.length - 1)],
+    offset: 5,
+    repeat: 3,
+    duration: 1000
+  }).on('tick', onTick);
   animation.animate(shapes[index], cursor).then(nextShape);
 };
 
