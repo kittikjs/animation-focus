@@ -1,17 +1,28 @@
 import Animation from 'kittik-animation-basic';
 
-const AVAILABLE_DIRECTIONS = ['inUp', 'inDown', 'inLeft', 'inRight', 'outUp', 'outDown', 'outLeft', 'outRight'];
+const AVAILABLE_DIRECTIONS = ['bounceUp', 'bounceRight', 'bounceDown', 'bounceLeft', 'shakeX', 'shakeY'];
 
 /**
- * Slide animation that animates sliding of the shapes.
+ * Focus animation is responsible for attention seekers for your shape.
  *
  * @since 1.0.0
  */
-export default class Slide extends Animation {
+export default class Focus extends Animation {
   constructor(options = {}) {
     super(options);
 
     this.setDirection(options.direction);
+    this.setOffset(options.offset);
+    this.setRepeat(options.repeat);
+  }
+
+  /**
+   * Get total duration of the animation taking to attention repeat count.
+   *
+   * @returns {Number}
+   */
+  getDuration() {
+    return this.get('duration') / this.getRepeat();
   }
 
   /**
@@ -29,75 +40,129 @@ export default class Slide extends Animation {
    * @param {String} direction
    * @returns {Animation}
    */
-  setDirection(direction = 'inRight') {
+  setDirection(direction = 'shakeX') {
     if (AVAILABLE_DIRECTIONS.indexOf(direction) === -1) throw new Error(`Unknown direction: ${direction}`);
     return this.set('direction', direction);
   }
 
   /**
-   * Get shape instance and calculate startX, startY, endX and endY coordinates based on direction.
+   * Get interval value used for moving shape.
+   *
+   * @returns {Number}
+   */
+  getOffset() {
+    return this.get('offset');
+  }
+
+  /**
+   * Set interval value used for moving shape.
+   *
+   * @param {Number} [offset=5]
+   * @returns {Animation}
+   */
+  setOffset(offset = 5) {
+    return this.set('offset', offset);
+  }
+
+  /**
+   * Get repeat count of the attractor.
+   *
+   * @returns {Number}
+   */
+  getRepeat() {
+    return this.get('repeat');
+  }
+
+  /**
+   * Set repeat count of the attractor.
+   *
+   * @param {Number} [repeat=1]
+   * @returns {Animation}
+   */
+  setRepeat(repeat = 1) {
+    return this.set('repeat', repeat);
+  }
+
+  /**
+   * Animates shape with bounce effect based on direction.
    *
    * @param {Shape} shape
+   * @param {String} direction
+   * @returns {Promise}
    * @private
    */
-  _parseCoordinates(shape) {
-    let startX = shape.getX();
-    let startY = shape.getY();
-    let endX = shape.getX();
-    let endY = shape.getY();
+  _animateBounce(shape, direction = 'bounceUp') {
+    let startValue = shape.getY();
+    let endValue = shape.getY();
+    let property = 'y';
 
-    switch (this.getDirection()) {
-      case 'inUp':
-        startX = shape.getX();
-        startY = -shape.getHeight();
-        endX = shape.getX();
-        endY = shape.getY();
+    switch (direction) {
+      case 'bounceUp':
+        startValue = shape.getY();
+        endValue = shape.getY() - this.getOffset();
+        property = 'y';
         break;
-      case 'inDown':
-        startX = shape.getX();
-        startY = process.stdout.rows + shape.getHeight();
-        endX = shape.getX();
-        endY = shape.getY();
+      case 'bounceRight':
+        startValue = shape.getX();
+        endValue = shape.getX() + this.getOffset();
+        property = 'x';
         break;
-      case 'inLeft':
-        startX = -shape.getWidth();
-        startY = shape.getY();
-        endX = shape.getX();
-        endY = shape.getY();
+      case 'bounceDown':
+        startValue = shape.getY();
+        endValue = shape.getY() + this.getOffset();
+        property = 'y';
         break;
-      case 'inRight':
-        startX = process.stdout.columns + shape.getWidth();
-        startY = shape.getY();
-        endX = shape.getX();
-        endY = shape.getY();
-        break;
-      case 'outUp':
-        startX = shape.getX();
-        startY = shape.getY();
-        endX = shape.getX();
-        endY = -shape.getHeight();
-        break;
-      case 'outDown':
-        startX = shape.getX();
-        startY = shape.getY();
-        endX = shape.getX();
-        endY = process.stdout.rows + shape.getHeight();
-        break;
-      case 'outLeft':
-        startX = shape.getX();
-        startY = shape.getY();
-        endX = -shape.getWidth();
-        endY = shape.getY();
-        break;
-      case 'outRight':
-        startX = shape.getX();
-        startY = shape.getY();
-        endX = process.stdout.columns;
-        endY = shape.getY();
+      case 'bounceLeft':
+        startValue = shape.getX();
+        endValue = shape.getX() - this.getOffset();
+        property = 'x';
         break;
     }
 
-    return {startX, startY, endX, endY};
+    const length = this.getRepeat();
+    const firstStep = () => this.animateProperty({shape, property, startValue, endValue});
+    const secondStep = () => this.animateProperty({shape, property, startValue: endValue, endValue: startValue});
+    const promise = Array.from({length}).reduce(promise => promise.then(firstStep).then(secondStep), Promise.resolve(shape));
+
+    return promise;
+  }
+
+  /**
+   * Animates shape with shake effect based on direction.
+   *
+   * @param {Shape} shape
+   * @param {String} direction
+   * @returns {Promise}
+   * @private
+   */
+  _animateShake(shape, direction = 'shakeX') {
+    let startValue = shape.getX();
+    let leftValue = shape.getX();
+    let rightValue = shape.getX();
+    let property = 'x';
+
+    switch (direction) {
+      case 'shakeX':
+        startValue = shape.getX();
+        leftValue = shape.getX() - this.getOffset();
+        rightValue = shape.getX() + this.getOffset();
+        property = 'x';
+        break;
+      case 'shakeY':
+        startValue = shape.getY();
+        leftValue = shape.getY() - this.getOffset();
+        rightValue = shape.getY() + this.getOffset();
+        property = 'y';
+        break;
+    }
+
+    const length = this.getRepeat();
+    const firstStep = () => this.animateProperty({shape, property, startValue, endValue: leftValue});
+    const secondStep = () => this.animateProperty({shape, property, startValue: leftValue, endValue: rightValue});
+    const thirdStep = () => this.animateProperty({shape, property, startValue: rightValue, endValue: startValue});
+    const promise = Array.from({length}).reduce(promise => promise.then(firstStep).then(secondStep).then(thirdStep), Promise.resolve(shape));
+
+    return promise;
   }
 
   /**
@@ -108,14 +173,13 @@ export default class Slide extends Animation {
    * @param {Cursor} cursor
    */
   animate(shape, cursor) {
-    const {startX, startY, endX, endY} = this._parseCoordinates(shape);
+    const isBounce = this.getDirection().indexOf('bounce') !== -1;
 
-    return new Promise(resolve => {
-      return Promise.all([
-        this.animateProperty({shape: shape, property: 'x', startValue: startX, endValue: endX}),
-        this.animateProperty({shape: shape, property: 'y', startValue: startY, endValue: endY})
-      ]).then(() => resolve(shape));
-    });
+    if (isBounce) {
+      return this._animateBounce(shape, this.getDirection());
+    } else {
+      return this._animateShake(shape, this.getDirection());
+    }
   }
 
   /**
@@ -127,7 +191,9 @@ export default class Slide extends Animation {
     const obj = super.toObject();
 
     Object.assign(obj.options, {
-      direction: this.get('direction')
+      direction: this.get('direction'),
+      offset: this.get('offset'),
+      repeat: this.get('repeat')
     });
 
     return obj;
