@@ -92,33 +92,13 @@ export default class Focus extends Animation {
    * @private
    */
   _animateBounce(shape, direction) {
-    let startValue = shape.getY();
-    let endValue = shape.getY();
-    let property = 'y';
-
-    switch (direction) {
-      case 'bounceUp':
-        startValue = shape.getY();
-        endValue = shape.getY() - this.getOffset();
-        property = 'y';
-        break;
-      case 'bounceRight':
-        startValue = shape.getX();
-        endValue = shape.getX() + this.getOffset();
-        property = 'x';
-        break;
-      case 'bounceDown':
-        startValue = shape.getY();
-        endValue = shape.getY() + this.getOffset();
-        property = 'y';
-        break;
-      case 'bounceLeft':
-        startValue = shape.getX();
-        endValue = shape.getX() - this.getOffset();
-        property = 'x';
-        break;
-    }
-
+    const directions = {
+      bounceUp: () => [shape.getY(), shape.getY() - this.getOffset(), 'y'],
+      bounceRight: () => [shape.getX(), shape.getX() + this.getOffset(), 'x'],
+      bounceDown: () => [shape.getY(), shape.getY() + this.getOffset(), 'y'],
+      bounceLeft: () => [shape.getX(), shape.getX() - this.getOffset(), 'x']
+    };
+    const [startValue, endValue, property] = directions[direction]();
     const length = this.getRepeat();
     const firstStep = () => this.animateProperty({shape, property, startValue, endValue});
     const secondStep = () => this.animateProperty({shape, property, startValue: endValue, endValue: startValue});
@@ -136,26 +116,11 @@ export default class Focus extends Animation {
    * @private
    */
   _animateShake(shape, direction) {
-    let startValue = shape.getX();
-    let leftValue = shape.getX();
-    let rightValue = shape.getX();
-    let property = 'x';
-
-    switch (direction) {
-      case 'shakeX':
-        startValue = shape.getX();
-        leftValue = shape.getX() - this.getOffset();
-        rightValue = shape.getX() + this.getOffset();
-        property = 'x';
-        break;
-      case 'shakeY':
-        startValue = shape.getY();
-        leftValue = shape.getY() - this.getOffset();
-        rightValue = shape.getY() + this.getOffset();
-        property = 'y';
-        break;
-    }
-
+    const directions = {
+      shakeX: () => [shape.getX(), shape.getX() - this.getOffset(), shape.getX() + this.getOffset(), 'x'],
+      shakeY: () => [shape.getY(), shape.getY() - this.getOffset(), shape.getY() + this.getOffset(), 'y']
+    };
+    const [startValue, leftValue, rightValue, property] = directions[direction]();
     const length = this.getRepeat();
     const firstStep = () => this.animateProperty({shape, property, startValue, endValue: leftValue});
     const secondStep = () => this.animateProperty({shape, property, startValue: leftValue, endValue: rightValue});
