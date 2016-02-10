@@ -91,7 +91,7 @@ export default class Focus extends Animation {
    * @returns {Promise}
    * @private
    */
-  _animateBounce(shape, direction = 'bounceUp') {
+  _animateBounce(shape, direction) {
     let startValue = shape.getY();
     let endValue = shape.getY();
     let property = 'y';
@@ -135,7 +135,7 @@ export default class Focus extends Animation {
    * @returns {Promise}
    * @private
    */
-  _animateShake(shape, direction = 'shakeX') {
+  _animateShake(shape, direction) {
     let startValue = shape.getX();
     let leftValue = shape.getX();
     let rightValue = shape.getX();
@@ -177,8 +177,6 @@ export default class Focus extends Animation {
 
     if (/bounce/.test(direction)) return this._animateBounce(shape, direction);
     if (/shake/.test(direction)) return this._animateShake(shape, direction);
-
-    return Promise.reject('Unknown animation type');
   }
 
   /**
