@@ -4,6 +4,16 @@ import Rectangle from 'kittik-shape-rectangle';
 import Focus from '../../src/Focus';
 
 describe('Animation::Focus', () => {
+  it('Should properly create animation instance', () => {
+    const animation = new Focus();
+    assert.instanceOf(animation, Focus);
+  });
+
+  it('Should properly get duration', () => {
+    const animation = new Focus();
+    assert.equal(animation.getDuration(), 1000);
+  });
+
   it('Should properly get/set direction', () => {
     const animation = new Focus({direction: 'bounceDown'});
     assert.equal(animation.getDirection(), 'bounceDown');
@@ -16,8 +26,128 @@ describe('Animation::Focus', () => {
     assert.throws(() => animation.setDirection('wrong'), Error, 'Unknown direction: wrong');
   });
 
-  it('Should properly call the animate() method', done => {
+  it('Should properly get/set offset', () => {
+    const animation = new Focus({offset: 10});
+    assert.equal(animation.getOffset(), 10);
+    assert.instanceOf(animation.setOffset(2), Focus);
+    assert.equal(animation.getOffset(), 2);
+  });
+
+  it('Should properly get/set repeat', () => {
+    const animation = new Focus({repeat: 5});
+    assert.equal(animation.getRepeat(), 5);
+    assert.instanceOf(animation.setRepeat(10), Focus);
+    assert.equal(animation.getRepeat(), 10);
+  });
+
+  it('Should properly call _animateBounce() with bounceUp direction', done => {
+    const animation = new Focus({direction: 'bounceUp'});
+    const mock = sinon.mock(animation);
+    const shape = new Rectangle();
+
+    mock.expects('animateProperty').twice().returns(Promise.resolve());
+
+    animation.animate(shape).then(() => {
+      mock.verify();
+      done();
+    }).catch(done);
+  });
+
+  it('Should properly call _animateBounce() with bounceRight direction', done => {
+    const animation = new Focus({direction: 'bounceRight'});
+    const mock = sinon.mock(animation);
+    const shape = new Rectangle();
+
+    mock.expects('animateProperty').twice().returns(Promise.resolve());
+
+    animation.animate(shape).then(() => {
+      mock.verify();
+      done();
+    }).catch(done);
+  });
+
+  it('Should properly call _animateBounce() with bounceDown direction', done => {
+    const animation = new Focus({direction: 'bounceDown'});
+    const mock = sinon.mock(animation);
+    const shape = new Rectangle();
+
+    mock.expects('animateProperty').twice().returns(Promise.resolve());
+
+    animation.animate(shape).then(() => {
+      mock.verify();
+      done();
+    }).catch(done);
+  });
+
+  it('Should properly call _animateBounce() with bounceLeft direction', done => {
+    const animation = new Focus({direction: 'bounceLeft'});
+    const mock = sinon.mock(animation);
+    const shape = new Rectangle();
+
+    mock.expects('animateProperty').twice().returns(Promise.resolve());
+
+    animation.animate(shape).then(() => {
+      mock.verify();
+      done();
+    }).catch(done);
+  });
+
+  it('Should properly call _animateShake() with shakeX direction', done => {
+    const animation = new Focus({direction: 'shakeX'});
+    const mock = sinon.mock(animation);
+    const shape = new Rectangle();
+
+    mock.expects('animateProperty').thrice().returns(Promise.resolve());
+
+    animation.animate(shape).then(() => {
+      mock.verify();
+      done();
+    }).catch(done);
+  });
+
+  it('Should properly call _animateShake() with shakeY direction', done => {
+    const animation = new Focus({direction: 'shakeY'});
+    const mock = sinon.mock(animation);
+    const shape = new Rectangle();
+
+    mock.expects('animateProperty').thrice().returns(Promise.resolve());
+
+    animation.animate(shape).then(() => {
+      mock.verify();
+      done();
+    }).catch(done);
+  });
+
+  it('Should properly call the animate() method with default type', done => {
     const animation = new Focus();
+    const shape = new Rectangle();
+    const mock = sinon.mock(animation);
+
+    mock.expects('_animateBounce').never().returns(Promise.resolve());
+    mock.expects('_animateShake').once().returns(Promise.resolve());
+
+    animation.animate(shape).then(() => {
+      mock.verify();
+      done();
+    });
+  });
+
+  it('Should properly call the animate() method with bounce type', done => {
+    const animation = new Focus({direction: 'bounceUp'});
+    const shape = new Rectangle();
+    const mock = sinon.mock(animation);
+
+    mock.expects('_animateBounce').once().returns(Promise.resolve());
+    mock.expects('_animateShake').never().returns(Promise.resolve());
+
+    animation.animate(shape).then(() => {
+      mock.verify();
+      done();
+    });
+  });
+
+  it('Should properly call the animate() method with shake type', done => {
+    const animation = new Focus({direction: 'shakeX'});
     const shape = new Rectangle();
     const mock = sinon.mock(animation);
 
@@ -62,6 +192,8 @@ describe('Animation::Focus', () => {
     assert.equal(animation.getDuration(), 4000 / 5);
     assert.equal(animation.getEasing(), 'inOutExpo');
     assert.equal(animation.getDirection(), 'bounceDown');
+    assert.equal(animation.getOffset(), 20);
+    assert.equal(animation.getRepeat(), 5);
     assert.isFunction(animation.animate);
   });
 });
