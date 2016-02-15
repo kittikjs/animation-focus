@@ -1,6 +1,6 @@
 "use strict";
 
-const cursor = require('kittik-cursor').create().resetTTY();
+const cursor = require('kittik-cursor').create().resetTTY().hideCursor();
 const Focus = require('../lib/Focus');
 const shape = require('kittik-shape-rectangle').create({
   text: 'Good news, everybody!',
@@ -16,4 +16,4 @@ new Focus({
   easing: 'inOutCubic',
   duration: 2000,
   repeat: 5
-}).on('tick', shape => shape.render(cursor) && cursor.flush().eraseScreen()).animate(shape);
+}).on('tick', shape => shape.render(cursor) && cursor.flush().eraseScreen()).animate(shape).then(() => cursor.showCursor().flush());

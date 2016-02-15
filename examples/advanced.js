@@ -1,7 +1,7 @@
 "use strict";
 
 const AVAILABLE_DIRECTIONS = ['bounceUp', 'bounceRight', 'bounceDown', 'bounceLeft', 'shakeX', 'shakeY'];
-const cursor = require('kittik-cursor').create().resetTTY();
+const cursor = require('kittik-cursor').create().resetTTY().hideCursor();
 const Rectangle = require('kittik-shape-rectangle');
 const Focus = require('../lib/Focus');
 const shapes = [
@@ -29,6 +29,7 @@ const onTick = (shape, property, value) => {
 const nextShape = shape => {
   renderedShapes.push(shape);
   currentShapeIndex++;
+  if (currentShapeIndex == 9) cursor.showCursor().flush();
   playAnimation(currentShapeIndex);
 };
 
