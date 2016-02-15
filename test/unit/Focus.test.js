@@ -14,6 +14,11 @@ describe('Animation::Focus', () => {
     assert.equal(animation.getDuration(), 1000);
   });
 
+  it('Should properly get duration with different repeat count', () => {
+    const animation = new Focus({duration: 5000, repeat: 5});
+    assert.equal(animation.getDuration(), 1000);
+  });
+
   it('Should properly get/set direction', () => {
     const animation = new Focus({direction: 'bounceDown'});
     assert.equal(animation.getDirection(), 'bounceDown');
