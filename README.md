@@ -31,9 +31,9 @@ import Rectangle from 'kittik-shape-rectangle';
 import Cursor from 'kittik-cursor';
 
 const cursor = Cursor.create();
-const shape = Rectangle.create();
+const shape = Rectangle.create(cursor);
 
-Focus.create().animate(shape, cursor).then(shape => doSmthElseWithShape(shape));
+Focus.create().animate(shape).then(shape => doSmthElseWithShape(shape));
 ```
 
 ## License
