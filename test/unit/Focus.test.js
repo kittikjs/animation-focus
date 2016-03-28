@@ -1,4 +1,4 @@
-import { assert } from 'chai';
+import {assert} from 'chai';
 import sinon from 'sinon';
 import Rectangle from 'kittik-shape-rectangle';
 import Focus from '../../src/Focus';
@@ -160,6 +160,23 @@ describe('Animation::Focus', () => {
     mock.expects('_animateShake').once().returns(Promise.resolve());
 
     animation.animate(shape).then(() => {
+      mock.verify();
+      done();
+    });
+  });
+
+  it('Should properly throw error if unknown type of the animation in animate()', done => {
+    const animation = new Focus();
+    const shape = new Rectangle();
+    const mock = sinon.mock(animation);
+
+    animation.direction = 'unknown';
+
+    mock.expects('_animateBounce').never().returns(Promise.resolve());
+    mock.expects('_animateShake').never().returns(Promise.resolve());
+
+    animation.animate(shape).catch(error => {
+      assert.equal(error, `Unknown direction: unknown`);
       mock.verify();
       done();
     });
