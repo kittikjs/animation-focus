@@ -8,6 +8,15 @@ const AVAILABLE_DIRECTIONS = ['bounceUp', 'bounceRight', 'bounceDown', 'bounceLe
  * @since 1.0.0
  */
 export default class Focus extends Animation {
+  /**
+   * Create Focus animation instance.
+   *
+   * @constructor
+   * @param {Object} [options]
+   * @param {String} [options.direction] Direction of the animation
+   * @param {Number} [options.offset] Offset in cells, by how many cells you need to shift the shape
+   * @param {Number} [options.repeat] How many times you need to repeat this animation
+   */
   constructor(options = {}) {
     super(options);
 
@@ -98,6 +107,7 @@ export default class Focus extends Animation {
       bounceDown: () => [shape.getY(), shape.getY() + this.getOffset(), 'y'],
       bounceLeft: () => [shape.getX(), shape.getX() - this.getOffset(), 'x']
     };
+
     const [startValue, endValue, property] = directions[direction]();
     const length = this.getRepeat();
     const firstStep = () => this.animateProperty({shape, property, startValue, endValue});
@@ -120,6 +130,7 @@ export default class Focus extends Animation {
       shakeX: () => [shape.getX(), shape.getX() - this.getOffset(), shape.getX() + this.getOffset(), 'x'],
       shakeY: () => [shape.getY(), shape.getY() - this.getOffset(), shape.getY() + this.getOffset(), 'y']
     };
+
     const [startValue, leftValue, rightValue, property] = directions[direction]();
     const length = this.getRepeat();
     const firstStep = () => this.animateProperty({shape, property, startValue, endValue: leftValue});
@@ -135,13 +146,14 @@ export default class Focus extends Animation {
    *
    * @override
    * @param {Shape} shape
-   * @param {Cursor} cursor
    */
-  animate(shape, cursor) {
+  animate(shape) {
     const direction = this.getDirection();
 
     if (/bounce/.test(direction)) return this._animateBounce(shape, direction);
     if (/shake/.test(direction)) return this._animateShake(shape, direction);
+
+    return Promise.reject(`Unknown direction: ${direction}`);
   }
 
   /**
