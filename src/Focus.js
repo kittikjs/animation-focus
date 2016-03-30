@@ -1,10 +1,17 @@
 import Animation from 'kittik-animation-basic';
 
+/**
+ * Dictionary of all available directions that you can use.
+ *
+ * @type {Object}
+ * @private
+ */
 const AVAILABLE_DIRECTIONS = ['bounceUp', 'bounceRight', 'bounceDown', 'bounceLeft', 'shakeX', 'shakeY'];
 
 /**
  * Focus animation is responsible for attention seekers for your shape.
  *
+ * @extends {Animation}
  * @since 1.0.0
  */
 export default class Focus extends Animation {
@@ -12,10 +19,16 @@ export default class Focus extends Animation {
    * Create Focus animation instance.
    *
    * @constructor
-   * @param {Object} [options]
+   * @param {Object} [options] Options object
    * @param {String} [options.direction] Direction of the animation
    * @param {Number} [options.offset] Offset in cells, by how many cells you need to shift the shape
    * @param {Number} [options.repeat] How many times you need to repeat this animation
+   * @example
+   * Focus.create({
+   *   direction: 'shakeX',
+   *   offset: 10,
+   *   repeat: 2
+   * }).animate(someShapeInstance);
    */
   constructor(options = {}) {
     super(options);
@@ -28,6 +41,7 @@ export default class Focus extends Animation {
   /**
    * Get total duration of the animation taking to attention repeat count.
    *
+   * @override
    * @returns {Number}
    */
   getDuration() {
@@ -46,8 +60,8 @@ export default class Focus extends Animation {
   /**
    * Set new direction of the animation.
    *
-   * @param {String} direction
-   * @returns {Animation}
+   * @param {String} [direction='shakeX'] Direction of the animation seeker
+   * @returns {Focus}
    */
   setDirection(direction = 'shakeX') {
     if (AVAILABLE_DIRECTIONS.indexOf(direction) === -1) throw new Error(`Unknown direction: ${direction}`);
@@ -66,8 +80,8 @@ export default class Focus extends Animation {
   /**
    * Set interval value used for moving shape.
    *
-   * @param {Number} [offset=5]
-   * @returns {Animation}
+   * @param {Number} [offset=5] By how many cell you want to shift the shape when animate
+   * @returns {Focus}
    */
   setOffset(offset = 5) {
     return this.set('offset', offset);
@@ -85,8 +99,8 @@ export default class Focus extends Animation {
   /**
    * Set repeat count of the attractor.
    *
-   * @param {Number} [repeat=1]
-   * @returns {Animation}
+   * @param {Number} [repeat=1] How many times you want to repeat this attractor
+   * @returns {Focus}
    */
   setRepeat(repeat = 1) {
     return this.set('repeat', repeat);
@@ -98,6 +112,7 @@ export default class Focus extends Animation {
    * @param {Shape} shape
    * @param {String} direction
    * @returns {Promise}
+   * @fulfil {Shape} When animation is done, fulfils with Shape instance
    * @private
    */
   _animateBounce(shape, direction) {
@@ -123,6 +138,7 @@ export default class Focus extends Animation {
    * @param {Shape} shape
    * @param {String} direction
    * @returns {Promise}
+   * @fulfil {Shape} When animation is done, fulfils with Shape instance
    * @private
    */
   _animateShake(shape, direction) {
@@ -146,6 +162,9 @@ export default class Focus extends Animation {
    *
    * @override
    * @param {Shape} shape
+   * @returns {Promise}
+   * @fulfil {Shape} When animation is done, fulfils with Shape instance
+   * @reject {String} If direction is unknown, rejects the promise
    */
   animate(shape) {
     const direction = this.getDirection();
@@ -159,6 +178,7 @@ export default class Focus extends Animation {
   /**
    * Serializes animation to Object representation.
    *
+   * @override
    * @returns {Object}
    */
   toObject() {
