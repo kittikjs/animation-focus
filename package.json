@@ -22,7 +22,7 @@
     "test": "babel-node ./node_modules/.bin/isparta cover _mocha"
   },
   "dependencies": {
-    "kittik-animation-basic": "3.0.0"
+    "kittik-animation-basic": "3.1.0"
   },
   "devDependencies": {
     "babel-cli": "6.6.4",
