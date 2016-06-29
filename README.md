@@ -13,7 +13,11 @@
 ![dependencies](https://img.shields.io/david/kittikjs/animation-focus.svg)
 ![dev dependencies](https://img.shields.io/david/dev/kittikjs/animation-focus.svg)
 
-Focus animation that takes attention to shape
+Focus animation that takes attention to a shape (Bounce or Shake).
+
+| Examples |
+| -------- |
+| ![kittik](https://cloud.githubusercontent.com/assets/3625244/16448517/92f4cd08-3dfa-11e6-9983-5664187bd487.gif) |
 
 ## Getting Started
 
@@ -35,6 +39,10 @@ const shape = Rectangle.create(cursor);
 
 Focus.create().animate(shape).then(shape => doSmthElseWithShape(shape));
 ```
+
+## API
+
+API declaration is [here](./API.md).
 
 ## License
 
